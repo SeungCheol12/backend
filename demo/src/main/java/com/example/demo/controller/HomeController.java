@@ -1,36 +1,81 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.example.demo.dto.Info;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Log4j2
 @Controller
 public class HomeController {
 
+    @GetMapping("/")
+    public String getIndex(RedirectAttributes rttr) {
+        // return "index";
+
+        // ?key=value&key=value 보내고 싶을 때
+        // http://localhost:8080/home?bno=10
+        rttr.addAttribute("bno", 10);
+        rttr.addAttribute("name", "홍길동");
+        
+        rttr.addFlashAttribute("money",10);
+        return "redirect:/home"; // redirect:/경로 (컨트롤러가 가지고 있는 경로 중 하나)
+    }
+    
 // get 요청으로 들어올 때
     @GetMapping("/home")
-    public void getHome() {
+    public void getHome(int bno, String name) {
         log.info("home 요청");
-        
+        log.info("home 요청 {} {}", bno, name);
     } 
     @GetMapping("/add")
-    public String getAdd() {
-        return "result";
+    public String getAdd(@RequestParam int num1, @RequestParam String op,
+     @RequestParam int num2, Model model) {
+        log.info("사칙연산 요청 {} {} {}", num1, op, num2);
+        int result = 0;
+        switch (op) {
+          case "+":
+            result = num1 + num2;
+            break;
+          case "-":
+            result = num1 - num2;
+            break;
+          case "*":
+            result = num1 * num2;
+            break;
+          case "/":
+            result = num1 / num2;
+            break;
+
+          default:
+            break;
+        }
+        log.info("result = "+ result);
+        // Model : spring framework 가 지원해준다 => 컨트롤러가 뷰에 데이터를 전달하기 위해 사용하는 인터페이스
+        // (key, value)
+        model.addAttribute("num1", num1);
+        model.addAttribute("op", op);
+        model.addAttribute("num2", num2);
+        model.addAttribute("result", result);
+        return "exam3";
     }
     @GetMapping("/calc")
-    public void getMethodName() {
+    public void getCalc() {
         log.info("calc get");
     }
     
     @PostMapping("/calc")
-    public void postMethodName(int num1,int num2) {
-       log.info("calc post {}", num1, num2);
+    public void postCalc(@RequestParam(required = false, defaultValue = "0") int num1,
+    @RequestParam(required = false, defaultValue = "0") int num2) {
+       log.info("calc post {} {}", num1, num2);
         
     
     }
@@ -38,16 +83,31 @@ public class HomeController {
     public void getInfo() {
         log.info("info.html 호출");
     }
-
+    // 클라이언트가 입력한 값 가져오기
+    // 파라미터 바인딩
     // @PostMapping("/info")
     // public void postInfo(String username, int age, String addr, String tel) {
     //    log.info("info post");
     //    log.info("{},{},{},{}", username, age, addr, tel);
     // }
+
+    // 객체 바인딩
+    // @PostMapping("/info")
+    // public void postInfo(Info info) {
+    //    log.info("info post");
+    //    log.info("{},{},{},{}", info.getUsername(), info.getAge(), info.getAddr(), info.getTel());
+    // }
+
+    // HttpServletRequest 객체 사용
+    // 사용자가 요청할 때 사용하는 모든 정보 가지고 올 수 있음 : 브라우저정보, 사용자 ip, 경로 추출
     @PostMapping("/info")
-    public void postInfo(Info info) {
+    public void postInfo(HttpServletRequest request) {
        log.info("info post");
-       log.info("{},{},{},{}", info.getUsername(), info.getAge(), info.getAddr(), info.getTel());
+       String username = request.getParameter("username");
+       int age = Integer.parseInt(request.getParameter("age"));
+       String addr = request.getParameter("addr");
+       String tel = request.getParameter("Tel");
+       log.info("{},{},{},{}", username, age, addr, tel);
     }
     
 }
