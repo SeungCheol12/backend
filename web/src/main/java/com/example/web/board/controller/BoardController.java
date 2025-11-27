@@ -15,32 +15,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.web.board.dto.BoardDTO;
 
-
 @Controller
 @Log4j2
 @RequestMapping("/board")
 public class BoardController {
+
     @GetMapping("/list")
     public void getList(Model model) {
-       log.info("/board/list 요청");
+        log.info("/board/list 요청");
 
-    //    BoardDTO dto = new BoardDTO(1L, "스프링 부트", "홍길동", LocalDate.now());
+        // BoardDTO dto = new BoardDTO(1L, "스프링 부트", "홍길동", LocalDate.now());
 
-    List<BoardDTO> list = new ArrayList<>();
+        List<BoardDTO> list = new ArrayList<>();
         for (Long i = 1L; i < 21; i++) {
             // Builder 패턴 적용
             BoardDTO dto = BoardDTO.builder()
-            .id(i)
-            .title("스프링 부트" +i).writer("홍길동").regDate(LocalDateTime.now()).build();
+                    .id(i)
+                    .title("스프링 부트" + i).writer("홍길동").regDate(LocalDateTime.now()).build();
             list.add(dto);
-            }
-            model.addAttribute("list", list);
         }
+        model.addAttribute("list", list);
+    }
 
-        
     @GetMapping("/read")
     public void getRead(@RequestParam Long id) {
         log.info("read 요청 {}", id);
     }
-    
+
 }
