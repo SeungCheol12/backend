@@ -2,6 +2,7 @@ package com.example.student.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
@@ -37,11 +38,15 @@ public class StudentService {
         List<Student> result = studentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         // entity => dto
-        List<StudentDTO> list = new ArrayList<>();
+        // List<StudentDTO> list = new ArrayList<>();
 
-        for (Student student : result) {
-            list.add(modelMapper.map(student, StudentDTO.class));
-        }
+        // for (Student student : result) {
+        // list.add(modelMapper.map(student, StudentDTO.class));
+        // }
+
+        // stream과 collect를 활용해 코드를 다시 작성했다
+        List<StudentDTO> list = result.stream().map(student -> modelMapper.map(student, StudentDTO.class))
+                .collect(Collectors.toList());
         return list;
     }
 
