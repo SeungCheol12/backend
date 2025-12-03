@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/main_layout}">
+  <div layout:fragment="content">
+    <h1>학생등록</h1>
+    <form action="" method="post" id="insert-form" autocomplete="off">
+      <div class="mb-3">
+        <label for="text" class="form-label">이름</label>
+        <input class="form-control" id="name" rows="3" name="name" placeholder="이름 입력" type="text" />
+        <!-- <div class="text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div> -->
+      </div>
+      <div class="mb-3">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="gender_m" value="M" />
+          <label class="form-check-label" for="gender_M"> 남 </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="gender_f" value="F" />
+          <label class="form-check-label" for="gender_F"> 녀 </label>
+        </div>
+        <!-- <div class="text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div> -->
+      </div>
+      <div class="mb-3">
+        <label for="addr" class="form-label">주소</label>
+        <input class="form-control" id="addr" rows="3" name="addr" placeholder="주소 입력" type="addr" />
+        <!-- <div class="text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div> -->
+      </div>
+      <div class="mb-3">
+        <label for="grade" class="form-label">학년</label>
+        <!-- selectbox -->
+        <select class="form-select" aria-label="Default select example" name="grade">
+          <option selected>학년 선택</option>
+          <option value="FRESHMAN">FRESHMAN</option>
+          <option value="SOPHOMORE">SOPHOMORE</option>
+          <option value="JUNIOR">JUNIOR</option>
+          <option value="SENIOR">SENIOR</option>
+        </select>
+        <!-- <div class="text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div> -->
+      </div>
+      <a type="button" class="btn btn-outline-success" th:href="@{/student/list}">목록</a>
+      <button type="submit" class="btn btn-outline-primary">등록</button>
+    </form>
+  </div>
+  <th:block layout:fragment="script">
+    <!-- 페이지별 개별 javascript 작성 -->
+  </th:block>
+</html>

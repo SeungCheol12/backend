@@ -34,7 +34,7 @@ public class StudentService {
 
     public List<StudentDTO> readAll() {
         // select ~~~ order by id desc;
-        List<Student> result = studentRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<Student> result = studentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         // entity => dto
         List<StudentDTO> list = new ArrayList<>();
@@ -56,7 +56,7 @@ public class StudentService {
         return studentRepository.save(student).getId();
     }
 
-    public void delete() {
-        studentRepository.deleteById(null);
+    public void delete(Long id) {
+        studentRepository.deleteById(id);
     }
 }
