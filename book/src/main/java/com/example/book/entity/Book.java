@@ -23,7 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "booktbl")
-@Setter
+// @Setter
 @Entity // => 이 클래스는 테이블과 연동되어 있음
 public class Book {
     @Id
@@ -37,12 +37,19 @@ public class Book {
     private String title;
 
     @Column(nullable = false)
-    private int price;
+    private Integer price;
 
     @Column(nullable = false)
     private String author;
 
-    public void changePrice(int price) {
+    @Column
+    private String description;
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changePrice(Integer price) {
         this.price = price;
     }
 

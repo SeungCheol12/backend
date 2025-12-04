@@ -21,10 +21,11 @@ public class BookService {
     private final BookRepositoty bookRepositoty;
     private final ModelMapper mapper;
 
-    public void create(BookDTO dto) {
+    public String create(BookDTO dto) {
         // dto => entity 변경
-        bookRepositoty.save(mapper.map(dto, Book.class)); // .getId()
+        return bookRepositoty.save(mapper.map(dto, Book.class)).getTitle(); // .getId()
         // return 하려면 void를 Long 으로 바꾸고 .getId()를 붙인다
+        // getTitle()을 붙이고 String 으로 return 했다
     }
 
     // 하나만 조회, 여러개 조회
@@ -58,9 +59,15 @@ public class BookService {
         return mapper.map(book, BookDTO.class);
     }
 
+    public List<BookDTO> getList() {
+        List<Book> result = bookRepositoty.findAll();
+        return result.stream().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());
+    }
+
     public Long update(BookDTO dto) {
         Book book = bookRepositoty.findById(dto.getId()).orElseThrow();
         book.changePrice(dto.getPrice());
+        book.changeDescription(dto.getDescription());
         return bookRepositoty.save(book).getId();
     }
 
