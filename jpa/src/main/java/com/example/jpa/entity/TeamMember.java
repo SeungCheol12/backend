@@ -2,6 +2,7 @@ package com.example.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +17,7 @@ import lombok.ToString;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "team")
 @Getter
 @Builder
 public class TeamMember {
@@ -25,8 +26,12 @@ public class TeamMember {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    // @ManyToOne(optional = false)
     @JoinColumn(name = "team_id")
     private Team team;
 
+    public void changeTeam(Team team) {
+        this.team = team;
+    }
 }
