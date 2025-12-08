@@ -1,4 +1,4 @@
-package com.example.jpa.entity;
+package com.example.mart.entity;
 
 import java.time.LocalDateTime;
 
@@ -12,14 +12,14 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@MappedSuperclass // 공통 매핑 및 정보 재사용
 @EntityListeners(value = AuditingEntityListener.class)
+@MappedSuperclass
+@Setter
+@Getter
 public abstract class BaseEntity {
-    @CreatedDate // spring boot 설정 후 삽입
+    @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createDateTime2;
+    private LocalDateTime createDateTime;
 
     @LastModifiedDate
     private LocalDateTime updatedDateTime;
