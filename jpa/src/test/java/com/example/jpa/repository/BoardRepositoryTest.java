@@ -32,6 +32,7 @@ public class BoardRepositoryTest {
     public void updateTest1() {
         Board board = boardRepository.findById(10).get();
         board.changeTitle("title change");
+        board.changeContent("change content");
         boardRepository.save(board);
     }
 

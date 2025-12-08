@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 
-@EntityListeners(value = AuditingEntityListener.class)
+// @EntityListeners(value = AuditingEntityListener.class)
 @Builder
 @Getter
 @Data
@@ -35,7 +35,7 @@ import lombok.val;
 @AllArgsConstructor
 @Table(name = "stutbl")
 @Entity // => 이 클래스는 테이블과 연동되어 있음
-public class Student {
+public class Student extends BaseEntity {
 
     // @GeneratedValue(strategy = GenerationType.AUTO) == 기본값
     // @SequenceGenerator(name = "stu_seq_gen", sequenceName = "stu_seq",
@@ -62,14 +62,14 @@ public class Student {
     @Column
     private Grade grade;
 
-    @CreationTimestamp // insert 시 자동으로 일자 삽입
-    private LocalDateTime createDateTime1;
+    // @CreationTimestamp // insert 시 자동으로 일자 삽입
+    // private LocalDateTime createDateTime1;
 
-    @CreatedDate // spring boot 설정 후 삽입
-    private LocalDateTime createDateTime2;
+    // @CreatedDate // spring boot 설정 후 삽입
+    // private LocalDateTime createDateTime2;
 
-    @LastModifiedDate
-    private LocalDateTime updatedDateTime;
+    // @LastModifiedDate
+    // private LocalDateTime updatedDateTime;
 
     public void changeName(String name) {
         this.name = name;

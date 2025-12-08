@@ -30,4 +30,15 @@ public class Child {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Parent parent;
+
+    public void setParent(Parent parent) {
+        // 기존 부모 제거
+        if (this.parent != null) {
+            this.parent.getChilds().remove(this);
+        }
+        // 부모 연결
+        this.parent = parent;
+        // 부모에 child 객체 추가
+        parent.getChilds().add(this);
+    }
 }

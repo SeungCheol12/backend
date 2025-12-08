@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 
 import com.example.jpa.entity.Team;
 import com.example.jpa.entity.TeamMember;
@@ -40,7 +41,7 @@ public class TeamRepositoryTest {
 
         // or
 
-        Team team = teamRepository.findById(3L).get(); // 2
+        Team team = teamRepository.findById(5L).get(); // 2
 
         TeamMember member = TeamMember.builder().name("성춘향").team(team).build();
         teamMemberRepository.save(member);
@@ -153,4 +154,44 @@ public class TeamRepositoryTest {
         System.out.println(member.getTeam());
 
     }
+
+    // cascade 개념 적용
+    @Test
+    public void insertCascadeTest2() {
+
+        Team team = Team.builder().name("new").build();
+
+        team.getMembers().add(TeamMember.builder().name("성춘향").team(team).build());
+        teamRepository.save(team);
+    }
+
+    @Test
+    public void removeCascadeTest() {
+
+        teamMemberRepository.deleteById(5L);
+        // cascade를 적용해서 팀을 삭제하면 소속된 팀원을 모두 삭제한다
+    }
+
+    // orphanRemoval = ture 적용
+    @Commit
+    @Transactional
+    @Test
+    public void removeOrphanTest() {
+        Team team = teamRepository.findById(3L).get();
+        team.getMembers().remove(0);
+        teamRepository.save(team);
+    }
+
+    @Commit
+    @Transactional
+    @Test
+    public void updateCascadeTest() {
+
+        Team team = teamRepository.findById(5L).get();
+        team.changeName("sunflower");
+        TeamMember teamMember = team.getMembers().get(0);
+        teamMember.changeName("홍시루");
+
+    }
+
 }

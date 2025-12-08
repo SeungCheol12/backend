@@ -26,11 +26,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(value = AuditingEntityListener.class)
 @Builder
 @Table(name = "membertbl")
 @Entity
-public class Member {
+public class Member extends BaseEntity {
     // 아이디, 이름(필수), 나이(필수), 역할(MEMBER, ADMIN), 가입일자, 수정일자, 자기소개
 
     @Id
@@ -46,12 +45,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roletype role;
-
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @LastModifiedDate
-    private LocalDateTime updateDate;
 
     @Column(length = 2000)
     // @Lob

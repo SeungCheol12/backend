@@ -22,10 +22,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-@EntityListeners(value = AuditingEntityListener.class)
 @Entity
 @Table(name = "memotbl")
-public class Memo {
+public class Memo extends BaseEntity {
     // 테이블(memotbl) 컬럼 : mno, memo_text, create_date, update_date
     // 클래스 필드명 == 테이블 컬럼명
     // 클래스 필드명 != 테이블 컬럼명 => (@Column(name = ""))
@@ -36,12 +35,6 @@ public class Memo {
 
     @Column(nullable = false, name = "memo_text")
     private String text;
-
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @LastModifiedDate
-    private LocalDateTime updateDate;
 
     public void changeText(String text) {
         this.text = text;

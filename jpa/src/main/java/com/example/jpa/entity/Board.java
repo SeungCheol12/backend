@@ -19,7 +19,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@EntityListeners(value = AuditingEntityListener.class)
 @Builder
 // @Data
 @NoArgsConstructor
@@ -27,7 +26,7 @@ import lombok.ToString;
 @ToString
 @Table(name = "boardtbl")
 @Entity // => 이 클래스는 테이블과 연동되어 있음
-public class Board {
+public class Board extends BaseEntity {
     // id(자동순번), 제목(title), 내용(content-1500), 작성자(writer-20)
     // 작성일, 수정일
     @Id
@@ -42,12 +41,6 @@ public class Board {
 
     @Column(nullable = false, length = 20)
     private String writer;
-
-    @CreatedDate // spring boot 설정 후 삽입
-    private LocalDateTime createDateTime2;
-
-    @LastModifiedDate
-    private LocalDateTime updatedDateTime;
 
     public void changeTitle(String title) {
         this.title = title;

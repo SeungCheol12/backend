@@ -34,4 +34,8 @@ public class TeamMember {
     public void changeTeam(Team team) {
         this.team = team;
     }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
 }
