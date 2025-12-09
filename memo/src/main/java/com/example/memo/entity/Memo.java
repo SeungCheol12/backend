@@ -18,10 +18,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
 @EntityListeners(value = AuditingEntityListener.class)
 @Entity
 @Table(name = "memotbl")

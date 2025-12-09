@@ -85,6 +85,7 @@ public class MemoController {
         }
         // 일치하는 경우
         Long id = memoService.insert(dto);
+        // rttr.addAttribute("id", id);
         rttr.addFlashAttribute("msg", id + " 번 메모가 삽입되었습니다");
         return "redirect:/memo/list";
     }

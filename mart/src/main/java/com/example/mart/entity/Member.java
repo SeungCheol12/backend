@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.example.mart.constant.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -41,5 +43,9 @@ public class Member extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+    public void changeCity(String city) {
+        this.city = city;
+    }
 
 }

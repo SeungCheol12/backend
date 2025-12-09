@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.memo.dto.MemoDTO;
 import com.example.memo.entity.Memo;
@@ -19,6 +20,7 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Service
 @Log4j2
+@Transactional
 public class MemoService {
 
     // @Autowired
@@ -28,8 +30,9 @@ public class MemoService {
 
     private final MemoRepository memoRepository; // @RequiredArgsConstructor, final 와 세트로 간다
     private final ModelMapper modelMapper;
-    // 전체조회
 
+    // 전체조회
+    @Transactional(readOnly = true)
     public List<MemoDTO> readAll() {
         List<Memo> memos = memoRepository.findAll();
 
@@ -58,6 +61,7 @@ public class MemoService {
     }
 
     // 하나 조회
+    @Transactional(readOnly = true)
     public MemoDTO read(Long id) {
         // 1. void
         // Memo memo = memoRepository.findById(id).get();
@@ -84,7 +88,8 @@ public class MemoService {
         memo.changeText(dto.getText());
         // memo = memoRepository.save(memo);
         // return memo.getId();
-        return memoRepository.save(memo).getId();
+        // return memoRepository.save(memo).getId();
+        return memo.getId();
     }
 
     // 하나 삭제

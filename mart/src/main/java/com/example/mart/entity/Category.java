@@ -5,7 +5,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,39 +27,26 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = { "orderItems", "categoryItems" })
+@ToString(exclude = { "categoryItems" })
 @Getter
-@Table(name = "mart_item")
-public class Item {
-    // id, name, price, quantity
-
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
+    @Column(name = "category_id")
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private int price;
-
-    @Column(nullable = false)
-    private int quantity;
-
     @Builder.Default
-    @OneToMany(mappedBy = "item")
-    private List<OrderItem> orderItems = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "category")
     private List<CategoryItem> categoryItems = new ArrayList<>();
-    // 양방향
-    // @Builder.Default
-    // @ManyToMany(mappedBy = "items")
-    // private List<Category> categories = new ArrayList<>();
 
-    public void changeQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    // 대다대 관계 JPA 에게 직접 실행
+    // 단점 : 컬럼추가 어렵다(실무에서 사용하기 어렵다)
+    // @Builder.Default
+    // @ManyToMany
+    // @JoinTable(name = "category_item", joinColumns = @JoinColumn(name =
+    // "category_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
+    // private List<Item> items = new ArrayList<>();
+
 }

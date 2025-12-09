@@ -1,16 +1,20 @@
 package com.example.mart.entity;
 
+import com.example.mart.constant.BaseEntity;
+import com.example.mart.constant.DeliveryStatus;
+
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,30 +26,28 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = { "order", "item" })
+@ToString(exclude = { "order" })
 @Getter
-public class OrderItem {
-    // id, orderPrice(주문가격), count(주문수량)
-
+public class Delivery extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "delivery_id")
     private Long id;
 
+    // 배송주소
     @Column(nullable = false)
-    private int orderPrice;
+    private String city;
 
     @Column(nullable = false)
-    private int count;
+    private String street;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private String zipcode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DeliveryStatus deliveryStatus;
+
+    @OneToOne(mappedBy = "delivery")
     private Order order;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private Item item;
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
 }

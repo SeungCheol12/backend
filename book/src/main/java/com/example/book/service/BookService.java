@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.book.dto.BookDTO;
 import com.example.book.entity.Book;
@@ -15,6 +16,7 @@ import com.example.book.repository.BookRepositoty;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BookService {
 
@@ -31,7 +33,7 @@ public class BookService {
     // 하나만 조회, 여러개 조회
     // 검색 : title => %자바%
     // isbn => 유니크이기 때문에 하나만 조회
-
+    @Transactional(readOnly = true)
     public List<BookDTO> readTitle(String title) {
         List<Book> result = bookRepositoty.findByTitleContaining(title);
 
@@ -43,6 +45,7 @@ public class BookService {
         return result.stream().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public BookDTO readIsbn(String isbn) {
         // Optional<Book> result = bookRepositoty.findByIsbn(isbn);
         Book book = bookRepositoty.findByIsbn(isbn).orElseThrow();
@@ -51,6 +54,7 @@ public class BookService {
         return mapper.map(book, BookDTO.class);
     }
 
+    @Transactional(readOnly = true)
     public BookDTO readId(Long id) {
         // Optional<Book> result = bookRepositoty.findByIsbn(isbn);
         Book book = bookRepositoty.findById(id).orElseThrow();
@@ -59,6 +63,7 @@ public class BookService {
         return mapper.map(book, BookDTO.class);
     }
 
+    @Transactional(readOnly = true)
     public List<BookDTO> getList() {
         List<Book> result = bookRepositoty.findAll();
         return result.stream().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());
@@ -68,7 +73,8 @@ public class BookService {
         Book book = bookRepositoty.findById(dto.getId()).orElseThrow();
         book.changePrice(dto.getPrice());
         book.changeDescription(dto.getDescription());
-        return bookRepositoty.save(book).getId();
+        // return bookRepositoty.save(book).getId(); => dirty checking
+        return book.getId();
     }
 
     public void delete(Long id) {

@@ -14,7 +14,7 @@ import com.example.book.entity.Book;
 
 import jakarta.persistence.EntityNotFoundException;
 
-@Disabled
+// @Disabled
 @SpringBootTest
 public class BookRepositoryTest {
     @Autowired
@@ -83,5 +83,24 @@ public class BookRepositoryTest {
     @Test
     public void deleteTest() {
         bookRepositoty.deleteById(10L);
+    }
+
+    @Test
+    public void testFindBy() {
+        List<Book> list = bookRepositoty.findByAuthor("천인국3");
+        System.out.println("author : " + list);
+
+        list = bookRepositoty.findByAuthorEndingWith("0");
+        System.out.println("0으로 끝나는 : " + list);
+
+        list = bookRepositoty.findByAuthorStartingWith("천");
+        System.out.println("천으로 시작하는 " + list);
+
+        list = bookRepositoty.findByAuthorContaining("인");
+        System.out.println("인이 포함된 : " + list);
+
+        list = bookRepositoty.findByPriceBetween(30000, 50000);
+        System.out.println("30000~50000 : " + list);
+
     }
 }

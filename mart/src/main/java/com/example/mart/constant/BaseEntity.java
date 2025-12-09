@@ -1,4 +1,4 @@
-package com.example.mart.entity;
+package com.example.mart.constant;
 
 import java.time.LocalDateTime;
 
