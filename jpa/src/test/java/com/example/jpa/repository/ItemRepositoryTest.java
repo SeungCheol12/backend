@@ -1,5 +1,6 @@
 package com.example.jpa.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -63,5 +64,17 @@ public class ItemRepositoryTest {
     @Test
     public void readTest2Test() {
         itemRepository.findAll().forEach(item -> System.out.println(item));
+    }
+
+    @Test
+    public void aggrTest() {
+        List<Object[]> list = itemRepository.aggr();
+        for (Object[] objects : list) {
+            System.out.println("아이템의 수 " + objects[0]);
+            System.out.println("합계 " + objects[1]);
+            System.out.println("평균 " + objects[2]);
+            System.out.println("최대 " + objects[3]);
+            System.out.println("최소 " + objects[4]);
+        }
     }
 }

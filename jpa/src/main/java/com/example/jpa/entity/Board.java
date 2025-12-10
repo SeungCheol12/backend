@@ -31,7 +31,7 @@ public class Board extends BaseEntity {
     // 작성일, 수정일
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     private String title;

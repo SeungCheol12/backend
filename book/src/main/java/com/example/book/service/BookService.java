@@ -6,10 +6,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.book.dto.BookDTO;
+import com.example.book.dto.PageRequestDTO;
+import com.example.book.dto.PageResultDTO;
 import com.example.book.entity.Book;
 import com.example.book.repository.BookRepositoty;
 
@@ -64,9 +70,23 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookDTO> getList() {
-        List<Book> result = bookRepositoty.findAll();
-        return result.stream().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());
+    public PageResultDTO<BookDTO> getList(PageRequestDTO pageRequestDTO) {
+        // 0부터 시작하기 때문에 getPage 에서 -1을 한다
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(),
+                Sort.by("id").descending());
+
+        Page<Book> result = bookRepositoty.findAll(bookRepositoty.makePredicate(null, null), pageable);
+
+        // get() : Stream<Book>
+        List<BookDTO> dtoList = result.get().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());
+        // 전체 행의 개수
+        long totalCount = result.getTotalElements();
+
+        return PageResultDTO.<BookDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
     }
 
     public Long update(BookDTO dto) {

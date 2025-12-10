@@ -8,9 +8,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.example.book.dto.BookDTO;
 import com.example.book.entity.Book;
+import com.example.book.entity.QBook;
+import com.querydsl.core.types.Predicate;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -103,4 +108,33 @@ public class BookRepositoryTest {
         System.out.println("30000~50000 : " + list);
 
     }
+
+    // querydsl 라이브러리 추가 / QuerydslPredicateExecutor 상속
+    @Test
+    public void querydslTest() {
+        QBook book = QBook.book;
+        System.out.println(bookRepositoty.findAll(book.title.eq("바바바"))); // where b1_0.title=?
+        System.out.println(bookRepositoty.findAll(book.title.contains("파워"))); // where b1_0.title like ? escape '!'
+        System.out.println(bookRepositoty.findAll(book.title.contains("파워").and(book.id.gt(3L)))); // b1_0.title like ?
+                                                                                                   // escape '!' and
+                                                                                                   // b1_0.id>?
+        // bookRepositoty.findAll(Predicate predicate, Pageable pageable)
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        Page<Book> result = bookRepositoty.findAll(book.id.gt(0L), pageRequest);
+
+    }
+
+    @Test
+    public void pageTest() {
+        // bookRepositoty.findAll(Pageable pageable);
+        // select count(b1_0.id) : 전체 행의 개수
+        PageRequest pageRequest = PageRequest.of(0, 20); // limit ?, ? (0, 20)
+        Page<Book> result = bookRepositoty.findAll(pageRequest);
+
+        System.out.println("page size " + result.getSize());
+        System.out.println("TotalPages " + result.getTotalPages());
+        System.out.println("TotalElements " + result.getTotalElements());
+        System.out.println("Content " + result.getContent());
+    }
+
 }

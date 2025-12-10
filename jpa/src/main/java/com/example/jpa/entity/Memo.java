@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Entity
-@Table(name = "memotbl")
+@Table(name = "memotbl2")
 public class Memo extends BaseEntity {
     // 테이블(memotbl) 컬럼 : mno, memo_text, create_date, update_date
     // 클래스 필드명 == 테이블 컬럼명
