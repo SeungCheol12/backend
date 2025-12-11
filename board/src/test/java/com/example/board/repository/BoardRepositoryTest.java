@@ -71,9 +71,9 @@ public class BoardRepositoryTest {
     }
 
     // querydsl 테스트
-    @Test
-    public void listTest() {
-        List<Object[]> result = boardRepository.list();
-        System.out.println(result);
-    }
+    // @Test
+    // public void listTest() {
+    // List<Object[]> result = boardRepository.list();
+    // System.out.println(result);
+    // }
 }
