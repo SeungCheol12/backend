@@ -75,7 +75,8 @@ public class BookService {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(),
                 Sort.by("id").descending());
 
-        Page<Book> result = bookRepositoty.findAll(bookRepositoty.makePredicate(null, null), pageable);
+        Page<Book> result = bookRepositoty
+                .findAll(bookRepositoty.makePredicate(pageRequestDTO.getType(), pageRequestDTO.getKeyword()), pageable);
 
         // get() : Stream<Book>
         List<BookDTO> dtoList = result.get().map(book -> mapper.map(book, BookDTO.class)).collect(Collectors.toList());

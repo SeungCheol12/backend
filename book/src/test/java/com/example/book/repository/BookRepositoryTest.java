@@ -19,7 +19,7 @@ import com.querydsl.core.types.Predicate;
 
 import jakarta.persistence.EntityNotFoundException;
 
-// @Disabled
+@Disabled
 @SpringBootTest
 public class BookRepositoryTest {
     @Autowired

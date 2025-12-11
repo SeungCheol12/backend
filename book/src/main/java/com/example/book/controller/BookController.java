@@ -32,12 +32,13 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/register")
-    public void getRegister(BookDTO dto) {
+    public void getRegister(BookDTO dto, PageRequestDTO pageRequestDTO) {
         log.info("register 화면 요청");
     }
 
     @PostMapping("/register")
-    public String postRegister(@Valid BookDTO dto, BindingResult result, RedirectAttributes rttr) {
+    public String postRegister(@Valid BookDTO dto, BindingResult result, PageRequestDTO pageRequestDTO,
+            RedirectAttributes rttr) {
         log.info("도서등록 요청 {}", dto);
         if (result.hasErrors()) {
             for (Object fieldError : result.getAllErrors()) {
@@ -47,39 +48,45 @@ public class BookController {
         }
         String title = bookService.create(dto);
         rttr.addFlashAttribute("msg", title + "도서가 등록되었습니다.");
+        rttr.addAttribute("page", pageRequestDTO.getPage());
+        rttr.addAttribute("size", pageRequestDTO.getSize());
         return "redirect:/book/list";
     }
 
     @GetMapping("/list")
     public void getMethodName(Model model, PageRequestDTO pageRequestDTO) {
         log.info("list 화면 요청");
-        PageResultDTO<BookDTO> list = bookService.getList(pageRequestDTO);
-        model.addAttribute("list", list);
+        PageResultDTO<BookDTO> result = bookService.getList(pageRequestDTO);
+        model.addAttribute("result", result);
     }
 
     @GetMapping({ "/read", "/modify" })
-    public void getMethodName(@RequestParam Long id, Model model) {
-        log.info("도서 상세조회 {}", id);
+    public void getMethodName(@RequestParam Long id, PageRequestDTO pageRequestDTO, Model model) {
+        log.info("도서 상세조회 {} {}", id, pageRequestDTO);
 
         BookDTO dto = bookService.readId(id);
         model.addAttribute("dto", dto);
     }
 
     @PostMapping("/modify")
-    public String postModify(BookDTO dto, RedirectAttributes rttr) {
-        log.info("수정 요청 {}", dto);
+    public String postModify(BookDTO dto, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
+        log.info("수정 요청 {} {}", dto, pageRequestDTO);
         Long id = bookService.update(dto);
 
         rttr.addFlashAttribute("msg", "도서 정보가 수정되었습니다.");
         rttr.addAttribute("id", id);
+        rttr.addAttribute("page", pageRequestDTO.getPage());
+        rttr.addAttribute("size", pageRequestDTO.getSize());
         return "redirect:/book/read";
     }
 
     @PostMapping("/remove")
-    public String postMethodName(Long id, RedirectAttributes rttr) {
+    public String postMethodName(Long id, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("book 삭제 {}", id);
         bookService.delete(id);
         rttr.addFlashAttribute("msg", "도서가 삭제되었습니다");
+        rttr.addAttribute("page", pageRequestDTO.getPage());
+        rttr.addAttribute("size", pageRequestDTO.getSize());
         return "redirect:/book/list";
     }
 

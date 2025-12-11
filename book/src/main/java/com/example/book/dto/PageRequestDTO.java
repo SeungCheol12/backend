@@ -21,8 +21,8 @@ public class PageRequestDTO {
     @Builder.Default
     private int size = 10;
 
-    // public Pageable getPageable(Sort sort) {
-    // return PageRequest.of(page - 1, size);
-    // }
+    private String type;
+
+    private String keyword;
 
 }

@@ -19,7 +19,7 @@ import lombok.Setter;
 public abstract class BaseEntity {
     @CreatedDate // spring boot 설정 후 삽입
     @Column(updatable = false)
-    private LocalDateTime createDateTime2;
+    private LocalDateTime createDateTime;
 
     @LastModifiedDate
     private LocalDateTime updatedDateTime;
