@@ -9,9 +9,8 @@ import com.example.board.post.entity.Board;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class SearchBoardRepositoyImpl extends QuerydslRepositorySupport implements SearchBoardRepository {
-
-    public SearchBoardRepositoyImpl() {
+public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport implements SearchBoardRepository {
+    public SearchBoardRepositoryImpl() {
         super(Board.class);
     }
 

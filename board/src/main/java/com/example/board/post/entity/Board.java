@@ -1,9 +1,14 @@
 package com.example.board.post.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.board.member.entity.Member;
+import com.example.board.reply.entity.Reply;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -12,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +28,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = { "writer" })
+@ToString(exclude = { "writer", "replies" })
 @Getter
 @Table(name = "boardtbl")
 @Entity // => 이 클래스는 테이블과 연동되어 있음
@@ -43,6 +49,11 @@ public class Board extends BaseEntity {
     // Member
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Member writer;
+
+    // board -> reply 접근
+    @Builder.Default
+    @OneToMany(mappedBy = "board")
+    private List<Reply> replies = new ArrayList<>();
 
     public void changeTitle(String title) {
         this.title = title;

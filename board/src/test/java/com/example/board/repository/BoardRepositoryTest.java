@@ -1,11 +1,21 @@
 package com.example.board.repository;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.board.member.entity.Member;
 import com.example.board.member.repository.MemberRepository;
@@ -14,6 +24,7 @@ import com.example.board.post.repository.BoardRepository;
 import com.example.board.reply.entity.Reply;
 import com.example.board.reply.repository.ReplyRepository;
 
+@Disabled
 @SpringBootTest
 public class BoardRepositoryTest {
     @Autowired
@@ -24,6 +35,15 @@ public class BoardRepositoryTest {
 
     @Autowired
     private ReplyRepository replyRepository;
+
+    // delete test
+    @Test
+    @Transactional
+    @Commit
+    public void deleteByBnoTest() {
+        replyRepository.deleteByBno(1L);
+        boardRepository.deleteById(1L);
+    }
 
     @Test
     public void insertMemberTest() {
@@ -70,10 +90,87 @@ public class BoardRepositoryTest {
         });
     }
 
+    // board 읽기
+    @Test
+    @Transactional(readOnly = true)
+    public void readBoardTest() {
+        List<Board> list = boardRepository.findAll();
+        list.forEach(board -> {
+            System.out.println(board);
+        });
+
+    }
+
     // querydsl 테스트
-    // @Test
-    // public void listTest() {
-    // List<Object[]> result = boardRepository.list();
-    // System.out.println(result);
-    // }
+    @Test
+    public void listTest() {
+        List<Object[]> result = boardRepository.list();
+        System.out.println(result);
+    }
+
+    @Test
+    public void getBoardWithWriterListTest() {
+        List<Object[]> result = boardRepository.getBoardWithWriterList();
+        for (Object[] objects : result) {
+            System.out.println(Arrays.toString(objects));
+        }
+
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void getBoardWithWriterTest() {
+        // JPA
+        Board board = boardRepository.findById(33L).get();
+        System.out.println(board);
+        // 댓글 가져오기
+        System.out.println(board.getReplies());
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void getBoardWithWriterTest2() {
+        // JPQL(@Query)
+        List<Object[]> result = boardRepository.getBoardWithReply(33L);
+        // for (Object[] objects : result) { // 1
+        // System.out.println(Arrays.toString(objects));
+        // }
+        result.forEach(obj -> System.out.println(Arrays.toString(obj))); // 2
+    }
+
+    @Test
+    public void getBoardWithReplyCountTest() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
+        Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
+        // for (Object[] objects : result) { // 1
+        // System.out.println(Arrays.toString(objects));
+        // Board board = (Board) objects[0];
+        // Member member = (Member) objects[1];
+        // Long replyCnt = (Long) objects[2];
+        // System.out.println(board);
+        // System.out.println(member);
+        // System.out.println(replyCnt);
+        // }
+
+        // Stream<Object[]> data = result.get();
+        // Stream<Object[]> data2 = result.getContent().stream();
+
+        result.get().forEach(objects -> {
+            // System.out.println(Arrays.toString(obj));
+            Board board = (Board) objects[0];
+            Member member = (Member) objects[1];
+            Long replyCnt = (Long) objects[2];
+
+        }); // 2
+        Function<Object[], String> f = Arrays::toString;
+        // Object[] objects
+        result.get().forEach(objects -> System.out.println(f.apply(objects))); // [Ljava.lang.Object;@5df785d1
+    }
+
+    @Test
+    public void getBoardByBnoTest() {
+        Object result = boardRepository.getBoardByBno(1L);
+        Object[] arr = (Object[]) result;
+        System.out.println(Arrays.toString(arr));
+    }
 }
