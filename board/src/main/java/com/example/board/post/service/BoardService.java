@@ -36,7 +36,11 @@ public class BoardService {
     public PageResultDTO<BoardDTO> getList(PageRequestDTO requesttDTO) {
         Pageable pageable = PageRequest.of(requesttDTO.getPage() - 1, requesttDTO.getSize(),
                 Sort.by("bno").descending());
-        Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
+
+        // Query 사용
+        // Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
+
+        Page<Object[]> result = boardRepository.list(requesttDTO.getType(), requesttDTO.getKeyword(), pageable);
 
         // 번호, 제목(댓글 개수), 작성자, 작성일
         Function<Object[], BoardDTO> f = en -> entityToDto((Board) en[0], (Member) en[1], (Long) en[2]);
@@ -60,7 +64,17 @@ public class BoardService {
         return dto;
     }
 
-    public void insert(BoardDTO dto) {
+    // 게시글 등록
+    public Long insert(BoardDTO dto) {
+        Member member = Member.builder()
+                .email(dto.getWriterEmail())
+                .build();
+        Board board = Board.builder()
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .writer(member)
+                .build();
+        return boardRepository.save(board).getBno();
     }
 
     public void update(BoardDTO dto) {
@@ -83,7 +97,7 @@ public class BoardService {
                 .bno(board.getBno())
                 .title(board.getTitle())
                 .content(board.getContent())
-                .writerEail(member.getEmail())
+                .writerEmail(member.getEmail())
                 .writerName(member.getName())
                 .createDateTime(board.getCreateDateTime())
                 .updatedDateTime(board.getUpdatedDateTime())

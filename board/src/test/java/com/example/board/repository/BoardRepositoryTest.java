@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.board.member.entity.Member;
 import com.example.board.member.repository.MemberRepository;
+import com.example.board.post.dto.PageRequestDTO;
 import com.example.board.post.entity.Board;
 import com.example.board.post.repository.BoardRepository;
 import com.example.board.reply.entity.Reply;
@@ -104,8 +105,24 @@ public class BoardRepositoryTest {
     // querydsl 테스트
     @Test
     public void listTest() {
-        List<Object[]> result = boardRepository.list();
-        System.out.println(result);
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(0)
+                .size(20)
+                .type("tcw")
+                .keyword("title")
+                .build();
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage(),
+                pageRequestDTO.getSize(),
+                Sort.by("bno").descending());
+
+        // Pageable pageable = PageRequest.of(pageRequestDTO.getPage(),
+        // pageRequestDTO.getSize()); // sort 기준이 하나일 때
+
+        Page<Object[]> result = boardRepository.list(pageRequestDTO.getType(), pageRequestDTO.getKeyword(), pageable);
+        for (Object[] objects : result) {
+            System.out.println(Arrays.toString(objects));
+        }
     }
 
     @Test
