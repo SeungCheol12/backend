@@ -25,6 +25,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>, SearchBoard
     Object getBoardByBno(@Param("bno") Long bno);
 
     // 목록화면 => 페이지 나누기 필요
+    // 처음에만 사용(search 를 위해 변경)
     @Query(value = "select b, m, count(r) from Board b left join b.writer m left join Reply r on r.board = b group by b", countQuery = "select count(b) from Board b")
     Page<Object[]> getBoardWithReplyCount(Pageable pageable);
 }
