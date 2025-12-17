@@ -13,7 +13,9 @@ import com.example.board.reply.entity.Reply;
 import com.example.board.reply.repository.ReplyRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -56,10 +58,13 @@ public class ReplyService {
         replyRepository.deleteById(rno);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Long update(ReplyDTO dto) {
         Reply reply = replyRepository.findById(dto.getRno()).get();
         reply.changeText(dto.getText());
+
+        log.info("reply {}", reply);
+
         return reply.getRno();
     }
 

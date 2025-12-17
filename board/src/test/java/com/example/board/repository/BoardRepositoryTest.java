@@ -169,38 +169,39 @@ public class BoardRepositoryTest {
         result.forEach(obj -> System.out.println(Arrays.toString(obj))); // 2
     }
 
-    @Test
-    public void getBoardWithReplyCountTest() {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
-        Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
-        // for (Object[] objects : result) { // 1
-        // System.out.println(Arrays.toString(objects));
-        // Board board = (Board) objects[0];
-        // Member member = (Member) objects[1];
-        // Long replyCnt = (Long) objects[2];
-        // System.out.println(board);
-        // System.out.println(member);
-        // System.out.println(replyCnt);
-        // }
+    // @Test
+    // public void getBoardWithReplyCountTest() {
+    // Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
+    // Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
+    // // for (Object[] objects : result) { // 1
+    // // System.out.println(Arrays.toString(objects));
+    // // Board board = (Board) objects[0];
+    // // Member member = (Member) objects[1];
+    // // Long replyCnt = (Long) objects[2];
+    // // System.out.println(board);
+    // // System.out.println(member);
+    // // System.out.println(replyCnt);
+    // // }
 
-        // Stream<Object[]> data = result.get();
-        // Stream<Object[]> data2 = result.getContent().stream();
+    // // Stream<Object[]> data = result.get();
+    // // Stream<Object[]> data2 = result.getContent().stream();
 
-        result.get().forEach(objects -> {
-            // System.out.println(Arrays.toString(obj));
-            Board board = (Board) objects[0];
-            Member member = (Member) objects[1];
-            Long replyCnt = (Long) objects[2];
+    // result.get().forEach(objects -> {
+    // // System.out.println(Arrays.toString(obj));
+    // Board board = (Board) objects[0];
+    // Member member = (Member) objects[1];
+    // Long replyCnt = (Long) objects[2];
 
-        }); // 2
-        Function<Object[], String> f = Arrays::toString;
-        // Object[] objects
-        result.get().forEach(objects -> System.out.println(f.apply(objects))); // [Ljava.lang.Object;@5df785d1
-    }
+    // }); // 2
+    // Function<Object[], String> f = Arrays::toString;
+    // // Object[] objects
+    // result.get().forEach(objects -> System.out.println(f.apply(objects))); //
+    // [Ljava.lang.Object;@5df785d1
+    // }
 
     @Test
     public void getBoardByBnoTest() {
-        Object result = boardRepository.getBoardByBno(1L);
+        Object result = boardRepository.getBoardByBno(500L);
         Object[] arr = (Object[]) result;
         System.out.println(Arrays.toString(arr));
     }

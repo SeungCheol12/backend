@@ -50,6 +50,31 @@
         </div>
       </div>
     </div>
+    <!-- 댓글 영역 -->
+    <div class="card">
+      <div class="card-body">
+        <form action="" method="post" id="replyForm">
+          <input type="hidden" name="rno" />
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="replyer"
+              name="replyer"
+              autocomplete="off"
+              placeholder="작성자"
+            />
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control" id="text" name="text" rows="3" placeholder="내용"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" name="rbtn">댓글 작성</button>
+          <p></p>
+        </form>
+        <h5 class="card-title fw-semibold mb-4"><span>[[${dto.replyCnt}]]</span> 개의 댓글</h5>
+        <div class="replyList border px-2"></div>
+      </div>
+    </div>
   </div>
   <th:block layout:fragment="script">
     <!-- 페이지별 개별 javascript 작성 -->
