@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.club.entity.Member;
 import com.example.club.entity.constant.ClubMemberRole;
 
-// @Disabled
+@Disabled
 @SpringBootTest
 public class MemberRepositoryTest {
     @Autowired

@@ -15,6 +15,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.example.club.handler.LoginSuccessHandler;
+
 import lombok.extern.log4j.Log4j2;
 
 @EnableWebSecurity // 모든 웹 요청에 대해 Security Filter Chain 적용
@@ -27,18 +29,27 @@ public class SecurityConfig {
     @Bean // 객체 생성
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/assets/**").permitAll()
-                .requestMatchers("/sample/member").hasRole("MEMBER")
-                .requestMatchers("/sample/admin").hasRole("ADMIN"))
+                .requestMatchers("/", "/assets/**", "/member/auth", "/img/**").permitAll()
+                .requestMatchers("/member/**").hasRole("USER")
+                .requestMatchers("/manager/**").hasAnyRole("MANAGER")
+                .requestMatchers("/admin/**").hasAnyRole("ADMIN"))
                 // .httpBasic(Customizer.withDefaults()); // http 기본적인 방식
-                // .formLogin(Customizer.withDefaults()); // 기본 로그인 화면 보여주기
-                .formLogin(login -> login.loginPage("/member/login").permitAll())
+                // .formLogin(Customizer.withDefaults()) // 기본 로그인 화면 보여주기
+                .formLogin(login -> login.loginPage("/member/login").permitAll() // 폼 로그인
+                        // .defaultSuccessUrl("/", true)) // 로그인 성공 시 가는 기본 주소
+                        .successHandler(loginSuccessHandler())) // 로그인 성공 시 가는 주소
+                .oauth2Login(login -> login.successHandler(loginSuccessHandler())) // 소셜 로그인
                 .logout(logout -> logout.logoutUrl("/member/logout") // 로그아웃 post 로 처리
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"));
 
         return http.build();
+    }
+
+    @Bean
+    LoginSuccessHandler loginSuccessHandler() {
+        return new LoginSuccessHandler();
     }
 
     @Bean
