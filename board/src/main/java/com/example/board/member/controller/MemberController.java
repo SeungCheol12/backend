@@ -1,4 +1,4 @@
-package com.example.club.controller;
+package com.example.board.member.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.club.dto.MemberDTO;
-import com.example.club.dto.RegisterDTO;
-import com.example.club.service.ClubService;
+import com.example.board.member.dto.RegisterDTO;
+import com.example.board.member.service.MemberService;
 
 import jakarta.validation.Valid;
 
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class MemberController {
 
-    private final ClubService clubService;
+    private final MemberService clubService;
 
     @GetMapping("/login")
     public void getLogin() {

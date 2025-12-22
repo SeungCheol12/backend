@@ -1,8 +1,9 @@
-package com.example.club.config;
+package com.example.board.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -18,10 +19,11 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.example.club.handler.LoginSuccessHandler;
+import com.example.board.member.handler.LoginSuccessHandler;
 
 import lombok.extern.log4j.Log4j2;
 
+@EnableMethodSecurity // @PreAuthorize, @PostAuthorize 가능하게 한다
 @EnableWebSecurity // 모든 웹 요청에 대해 Security Filter Chain 적용
 @Configuration // 스프링 설정 클래스
 @Log4j2
@@ -32,9 +34,15 @@ public class SecurityConfig {
     @Bean // 객체 생성
     SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/assets/**", "/member/auth", "/img/**").permitAll()
+                .requestMatchers("/", "/assets/**", "/member/auth", "/img/**", "/js/**", "board/assets/images/**")
+                .permitAll()
                 .requestMatchers("/member/register").permitAll()
-                .requestMatchers("/member/**").hasRole("USER")
+                .requestMatchers("/board/list", "/board/read").permitAll()
+                .requestMatchers("/replies/board/**").permitAll()
+                .requestMatchers("/replies/new", "/board/create").authenticated()
+                .requestMatchers("/board/modify", "/board/remove").hasAnyRole("MANAGER", "USER", "ADMIN")
+
+                .requestMatchers("/member/profile").hasRole("USER")
                 .requestMatchers("/manager/**").hasAnyRole("MANAGER")
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN"))
                 // .httpBasic(Customizer.withDefaults()); // http 기본적인 방식

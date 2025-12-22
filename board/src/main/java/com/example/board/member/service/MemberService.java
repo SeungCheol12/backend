@@ -1,4 +1,4 @@
-package com.example.club.service;
+package com.example.board.member.service;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,11 +11,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.club.dto.MemberDTO;
-import com.example.club.dto.RegisterDTO;
-import com.example.club.entity.Member;
-import com.example.club.entity.constant.ClubMemberRole;
-import com.example.club.repository.MemberRepository;
+import com.example.board.member.constant.MemberRole;
+import com.example.board.member.dto.MemberDTO;
+import com.example.board.member.dto.RegisterDTO;
+import com.example.board.member.entity.Member;
+import com.example.board.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -27,7 +27,7 @@ import lombok.extern.log4j.Log4j2;
 @Setter
 @Service
 @RequiredArgsConstructor
-public class ClubService implements UserDetailsService {
+public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,7 +44,7 @@ public class ClubService implements UserDetailsService {
                 .fromSocial(false)
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .build();
-        member.addMemberRole(ClubMemberRole.USER);
+        member.addMemberRole(MemberRole.USER);
 
         memberRepository.save(member);
 

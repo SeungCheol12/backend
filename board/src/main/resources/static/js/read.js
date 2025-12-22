@@ -18,7 +18,9 @@ const loadReply = () => {
       let result = "";
       // data 댓글 목록으로 보여주기
       data.forEach((reply) => {
-        result += `<div class="d-flex justify-content-between my-2 border-bottom reply-row" data-rno="${reply.rno}">
+        result += `<div class="d-flex justify-content-between my-2 border-bottom reply-row" data-rno="${
+          reply.rno
+        }" data-email="${reply.replyerEmail}">
               <div class="p-3">
                 <img
                   src="/img/user.png"
@@ -28,7 +30,7 @@ const loadReply = () => {
                 />
               </div>
               <div class="flex-grow-1 align-self-center">
-                 <div>${reply.replyer}</div>
+                 <div>${reply.replyerName}</div>
                 <div>
                   <sapn class="fs-5">${reply.text}</sapn>
                 </div>
@@ -64,7 +66,7 @@ document.getElementById("replyForm").addEventListener("submit", (e) => {
   const reply = {
     rno: form.rno.value,
     text: form.text.value,
-    replyer: form.replyer.value,
+    replyerEmail: form.replyerEmail.value,
     bno: bno,
   };
   // new or modify => rno value 존재 여부
@@ -73,6 +75,7 @@ document.getElementById("replyForm").addEventListener("submit", (e) => {
     fetch(`${url}/new`, {
       method: "POST",
       headers: {
+        "X-CSRF-TOKEN": csrfVal,
         "Content-Type": "application/json", //text/html;charset=UTF-8
       },
       body: JSON.stringify(reply),
@@ -100,6 +103,7 @@ document.getElementById("replyForm").addEventListener("submit", (e) => {
       .catch((err) => console.log(err));
   } else {
     // modify
+    // 밑에서 준비한 댓글 수정 form을 불러와서 작성한 뒤 수정 확정
     fetch(`${url}/${rno}`, {
       method: "PUT",
       headers: {
@@ -206,6 +210,7 @@ replyList.addEventListener("click", (e) => {
     // 가져온 reply 를 이용해 replyForm에 보여주기
     const form = document.querySelector("#replyForm");
     // 댓글 작성 버튼 => 댓글 수정
+    // 댓글 수정 준비
     fetch(`${url}/${rno}`)
       .then((res) => {
         if (!res.ok) {
@@ -220,7 +225,7 @@ replyList.addEventListener("click", (e) => {
         form.rno.value = data.rno;
         form.replyer.value = data.replyer;
         form.text.value = data.text;
-        // 버튼 텍스트 변경
+        // 버튼 텍스트를 댓글 수정으로 변경
         form.rbtn.innerHTML = "댓글 수정";
       })
       .catch((err) => console.log(err));

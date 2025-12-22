@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.board.reply.dto.ReplyDTO;
+import com.example.board.reply.repository.ReplyRepository;
 import com.example.board.reply.service.ReplyService;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

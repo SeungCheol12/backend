@@ -2,6 +2,7 @@ package com.example.board.reply.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.example.board.member.entity.Member;
 import com.example.board.post.entity.BaseEntity;
 import com.example.board.post.entity.Board;
 
@@ -37,7 +38,9 @@ public class Reply extends BaseEntity {
     @Column(nullable = false)
     private String text;
 
-    private String replyer;
+    // GUSET => MEMBER 만 댓글 가능
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Member replyer;
 
     // Board
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

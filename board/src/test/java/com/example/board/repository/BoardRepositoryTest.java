@@ -14,9 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.board.member.constant.MemberRole;
 import com.example.board.member.entity.Member;
 import com.example.board.member.repository.MemberRepository;
 import com.example.board.post.dto.PageRequestDTO;
@@ -37,6 +39,9 @@ public class BoardRepositoryTest {
     @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // delete test
     @Test
     @Transactional
@@ -51,9 +56,15 @@ public class BoardRepositoryTest {
         IntStream.rangeClosed(1, 10).forEach(i -> {
             Member member = Member.builder()
                     .email("user" + i + "@gmail.com")
-                    .password("1111")
+                    .password(passwordEncoder.encode("1111"))
+                    .fromSocial(false)
                     .name("user" + i)
                     .build();
+            member.addMemberRole(MemberRole.USER);
+
+            if (i > 9) {
+                member.addMemberRole(MemberRole.ADMIN);
+            }
             memberRepository.save(member);
         });
     }
@@ -77,14 +88,17 @@ public class BoardRepositoryTest {
     @Test
     public void insertReplyTest() {
         IntStream.rangeClosed(1, 100).forEach(i -> {
-            long idx = (long) (Math.random() * 10) + 1;
-
+            long idx = (long) (Math.random() * 100) + 1;
+            int midx = (int) (Math.random() * 10) + 1;
             Board board = Board.builder()
                     .bno(idx)
                     .build();
+            Member member = Member.builder()
+                    .email("user" + midx + "@gmail.com")
+                    .build();
             Reply reply = Reply.builder()
                     .text("reply..." + i)
-                    .replyer("guest" + i)
+                    .replyer(member)
                     .board(board)
                     .build();
             replyRepository.save(reply);
@@ -98,7 +112,7 @@ public class BoardRepositoryTest {
 
             Reply reply = Reply.builder()
                     .text("reply..." + i)
-                    .replyer("guest" + i)
+                    // .replyer("guest" + i)
                     .board(board)
                     .build();
             replyRepository.save(reply);

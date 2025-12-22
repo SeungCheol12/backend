@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.board.member.entity.Member;
 import com.example.board.post.entity.Board;
 import com.example.board.reply.dto.ReplyDTO;
 import com.example.board.reply.entity.Reply;
@@ -78,7 +79,9 @@ public class ReplyService {
         ReplyDTO dto = ReplyDTO.builder()
                 .rno(reply.getRno())
                 .text(reply.getText())
-                .replyer(reply.getReplyer())
+                // .replyer(reply.getReplyer())
+                .replyerEmail(reply.getReplyer().getEmail())
+                .replyerName(reply.getReplyer().getName())
                 .bno(reply.getBoard().getBno())
                 .updatedDateTime(reply.getUpdatedDateTime())
                 .createDateTime(reply.getCreateDateTime())
@@ -88,10 +91,15 @@ public class ReplyService {
 
     // dto => entity
     private Reply dtoToEntity(ReplyDTO dto) {
+        Member member = Member.builder()
+                .email(dto.getReplyerEmail())
+                .build();
+
         Reply reply = Reply.builder()
                 .rno(dto.getRno())
                 .text(dto.getText())
-                .replyer(dto.getReplyer())
+                // .replyer(dto.getReplyer())
+                .replyer(member)
                 .board(Board.builder().bno(dto.getBno()).build())
                 .build();
         return reply;

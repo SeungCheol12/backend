@@ -14,4 +14,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     public void deleteByBno(Long bno);
 
     List<Reply> findByBoardOrderByRno(Board board);
+
 }

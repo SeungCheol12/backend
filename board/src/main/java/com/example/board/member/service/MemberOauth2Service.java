@@ -1,4 +1,4 @@
-package com.example.club.service;
+package com.example.board.member.service;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,10 +12,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.example.club.dto.MemberDTO;
-import com.example.club.entity.Member;
-import com.example.club.entity.constant.ClubMemberRole;
-import com.example.club.repository.MemberRepository;
+import com.example.board.member.constant.MemberRole;
+import com.example.board.member.dto.MemberDTO;
+import com.example.board.member.entity.Member;
+import com.example.board.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,7 +23,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class ClubOauth2Service extends DefaultOAuth2UserService {
+public class MemberOauth2Service extends DefaultOAuth2UserService {
     // 소셜로그인 정보로 회원 가입 처리를 위해
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -72,7 +72,7 @@ public class ClubOauth2Service extends DefaultOAuth2UserService {
                 .password(passwordEncoder.encode("1111"))
                 .fromSocial(true)
                 .build();
-        member.addMemberRole(ClubMemberRole.USER);
+        member.addMemberRole(MemberRole.USER);
 
         memberRepository.save(member);
         return member;

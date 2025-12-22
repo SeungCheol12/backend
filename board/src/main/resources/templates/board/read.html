@@ -35,6 +35,7 @@
               <a
                 type="submit"
                 class="btn btn-success"
+                th:if="${dto.writerEmail} == ${#authentication.name}"
                 th:href="@{/board/modify(bno=${dto.bno}, page=${pageRequestDTO.page}, size=${pageRequestDTO.size})}"
                 >수정</a
               >
@@ -53,22 +54,36 @@
     <!-- 댓글 영역 -->
     <div class="card">
       <div class="card-body">
-        <form action="" method="post" id="replyForm">
+        <form th:action="@{/replies/new}" method="post" id="replyForm" sec:authorize="isAuthenticated()">
           <input type="hidden" name="rno" />
+          <!-- 로그인 사용자의 아이디에 해당하는 이메일 -->
+          <input type="hidden" name="replyerEmail" th:value="${#authentication.name}" />
           <div class="mb-3">
             <input
               type="text"
               class="form-control"
-              id="replyer"
-              name="replyer"
-              autocomplete="off"
-              placeholder="작성자"
+              id="replyerName"
+              name="replyerName"
+              th:value="${#authentication.principal.name}"
+              sec:authorize="isAuthenticated()"
+              readonly
             />
+            <!-- 로그인 안 한 경우 -->
+            <p class="text-danger" sec:authorize="!isAuthenticated()">
+              댓글을 작성하려면 <a th:href="@{/member/login}">로그인</a>하세요.
+            </p>
           </div>
           <div class="mb-3">
-            <textarea class="form-control" id="text" name="text" rows="3" placeholder="내용"></textarea>
+            <textarea
+              class="form-control"
+              id="text"
+              name="text"
+              rows="3"
+              placeholder="내용"
+              sec:authorize="isAuthenticated()"
+            ></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" name="rbtn">댓글 작성</button>
+          <button type="submit" class="btn btn-primary" name="rbtn" sec:authorize="isAuthenticated()">댓글 작성</button>
           <p></p>
         </form>
         <h5 class="card-title fw-semibold mb-4"><span>[[${dto.replyCnt}]]</span> 개의 댓글</h5>
@@ -81,6 +96,8 @@
     <script th:inline="javascript">
       let msg = [[${msg}]];
       const bno = [[${dto.bno}]]
+      // replyForm 에서 CSRF 값 가져오기
+      const csrfVal = document.querySelector("#replyForm").querySelector("[name='_csrf']").value;
       console.log(msg);
       if (msg) {
 

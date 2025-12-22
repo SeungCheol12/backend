@@ -20,7 +20,8 @@ public class ReplyDTO {
 
     private String text;
 
-    private String replyer;
+    private String replyerEmail;
+    private String replyerName;
 
     private Long bno;
 

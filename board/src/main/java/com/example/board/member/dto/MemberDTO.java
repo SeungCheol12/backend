@@ -1,4 +1,4 @@
-package com.example.club.dto;
+package com.example.board.member.dto;
 
 import java.util.Collection;
 import java.util.Map;
