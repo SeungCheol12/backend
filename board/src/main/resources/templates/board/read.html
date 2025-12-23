@@ -97,7 +97,15 @@
       let msg = [[${msg}]];
       const bno = [[${dto.bno}]]
       // replyForm 에서 CSRF 값 가져오기
-      const csrfVal = document.querySelector("#replyForm").querySelector("[name='_csrf']").value;
+      // 로그인 안 했을 시 안보이는 문제 해결
+      const replyForm = document.querySelector("#replyForm");
+      let csrfVal = undefined;
+      if (replyForm) {
+         csrfVal = replyForm.querySelector("[name='_csrf']").value;
+
+      }
+      // 현재 로그인 사용자 이메일 가져오기
+      const loginUser = [[${#authentication.name}]];
       console.log(msg);
       if (msg) {
 

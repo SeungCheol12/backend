@@ -37,16 +37,20 @@ const loadReply = () => {
                 <div class="text-muted">
                   <span class="samll">${formatDate(reply.createDateTime)}</span>
                 </div>
-              </div>
-              <div class="d-flex flex-column align-self-center">
-                <div class="mb-2">
-                  <button class="btn btn-outline-danger btn-sm">삭제</button>
-                </div>
-                <div class="mb-2">
-                  <button class="btn btn-outline-success btn-sm">수정</button>
-                </div>
-                </div>
-                </div>`;
+              </div>`;
+        // 작성자 일치 시 수정, 삭제 버튼 보이기
+        if (`${loginUser}` === `${reply.replyerEmail}`) {
+          result += `
+                <div class="d-flex flex-column align-self-center">
+                  <div class="mb-2">
+                    <button class="btn btn-outline-danger btn-sm">삭제</button>
+                  </div>
+                  <div class="mb-2">
+                    <button class="btn btn-outline-success btn-sm">수정</button>
+                  </div>
+                  </div>`;
+        }
+        result += `</div>`;
       });
       replyList.innerHTML = result;
     })
@@ -58,84 +62,88 @@ loadReply();
 // 댓글 작성 클릭 시 == replyForm submit 이 발생 시
 // submit 기능 중지
 // post 요청
-
-document.getElementById("replyForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const rno = form.rno.value;
-  const reply = {
-    rno: form.rno.value,
-    text: form.text.value,
-    replyerEmail: form.replyerEmail.value,
-    bno: bno,
-  };
-  // new or modify => rno value 존재 여부
-  if (!rno) {
-    // new
-    fetch(`${url}/new`, {
-      method: "POST",
-      headers: {
-        "X-CSRF-TOKEN": csrfVal,
-        "Content-Type": "application/json", //text/html;charset=UTF-8
-      },
-      body: JSON.stringify(reply),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`error! ${res.status}`);
-        }
-        // json body 추출
-        return res.json();
+if (replyForm) {
+  replyForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const rno = form.rno.value;
+    const reply = {
+      rno: form.rno.value,
+      text: form.text.value,
+      replyerEmail: form.replyerEmail.value,
+      bno: bno,
+    };
+    // new or modify => rno value 존재 여부
+    if (!rno) {
+      // new
+      fetch(`${url}/new`, {
+        method: "POST",
+        headers: {
+          "X-CSRF-TOKEN": csrfVal,
+          "Content-Type": "application/json", //text/html;charset=UTF-8
+        },
+        body: JSON.stringify(reply),
       })
-      .then((data) => {
-        console.log(data);
-        if (data) {
-          Swal.fire({
-            title: "댓글 작성 완료",
-            icon: "success",
-            draggable: true,
-          });
-        }
-        form.replyer.value = "";
-        form.text.value = "";
-        loadReply();
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`error! ${res.status}`);
+          }
+          // json body 추출
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (data) {
+            Swal.fire({
+              title: "댓글 작성 완료",
+              icon: "success",
+              draggable: true,
+            });
+          }
+          // 작성자는 로그인 이름으로 고정이기 때문에
+          // form.replyerName.value = "";
+          form.text.value = "";
+          loadReply();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      // modify
+      // 밑에서 준비한 댓글 수정 form을 불러와서 작성한 뒤 수정 확정
+      fetch(`${url}/${rno}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json", //text/html;charset=UTF-8
+          "X-CSRF-TOKEN": csrfVal,
+        },
+        body: JSON.stringify(reply),
       })
-      .catch((err) => console.log(err));
-  } else {
-    // modify
-    // 밑에서 준비한 댓글 수정 form을 불러와서 작성한 뒤 수정 확정
-    fetch(`${url}/${rno}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", //text/html;charset=UTF-8
-      },
-      body: JSON.stringify(reply),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`error! ${res.status}`);
-        }
-        // json body 추출
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data) {
-          Swal.fire({
-            title: "댓글 수정 완료",
-            icon: "success",
-            draggable: true,
-          });
-        }
-        form.replyer.value = "";
-        form.text.value = "";
-        form.rno.value = "";
-        form.rbtn.innerHTML = "댓글 작성";
-        loadReply();
-      })
-      .catch((err) => console.log(err));
-  }
-});
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`error! ${res.status}`);
+          }
+          // json body 추출
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (data) {
+            Swal.fire({
+              title: "댓글 수정 완료",
+              icon: "success",
+              draggable: true,
+            });
+          }
+          // 작성자는 로그인 이름으로 고정이기 때문에
+          // form.replyerName.value = "";
+          form.text.value = "";
+          form.rno.value = "";
+          form.rbtn.innerHTML = "댓글 작성";
+          loadReply();
+        })
+        .catch((err) => console.log(err));
+    }
+  });
+}
 // 날짜 시간
 const formatDate = (data) => {
   const date = new Date(data);
@@ -178,6 +186,9 @@ replyList.addEventListener("click", (e) => {
     // true 인 경우 삭제요청(fetch)
     fetch(`http://localhost:8080/replies/${rno}`, {
       method: "DELETE",
+      headers: {
+        "X-CSRF-TOKEN": csrfVal,
+      },
     })
       .then((res) => {
         if (!res.ok) {
@@ -223,7 +234,8 @@ replyList.addEventListener("click", (e) => {
         console.log(data);
 
         form.rno.value = data.rno;
-        form.replyer.value = data.replyer;
+        form.replyerEmail.value = data.replyerEmail;
+        form.replyerName.value = data.replyerName;
         form.text.value = data.text;
         // 버튼 텍스트를 댓글 수정으로 변경
         form.rbtn.innerHTML = "댓글 수정";

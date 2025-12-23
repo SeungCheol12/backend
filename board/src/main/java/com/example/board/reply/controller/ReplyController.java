@@ -30,6 +30,7 @@ public class ReplyController {
     private final ReplyService replyService;
 
     // bno 를 이용해서 전체 reply 가져오기
+    @PreAuthorize("permitAll()")
     @GetMapping("/board/{bno}")
     public List<ReplyDTO> getList(@PathVariable Long bno) {
         log.info("{} 댓글 요청", bno);
@@ -38,6 +39,7 @@ public class ReplyController {
     }
 
     // rno 를 이용해서 특정 reply 가져오기
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{rno}")
     public ReplyDTO getRow(@PathVariable Long rno) {
         log.info("{} 댓글 요청", rno);
@@ -52,6 +54,7 @@ public class ReplyController {
         return rno;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/new")
     public Long putMethodName(@RequestBody ReplyDTO dto) {
         log.info("삽입 요청 {}", dto);
@@ -59,6 +62,7 @@ public class ReplyController {
         return rno;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{rno}")
     public String deleteReply(@PathVariable Long rno) {
         log.info("삭제 요청 {}", rno);
