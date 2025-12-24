@@ -1,6 +1,7 @@
 package com.example.movietalk.repository;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -13,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.movietalk.member.entity.Member;
 import com.example.movietalk.member.entity.constant.Role;
@@ -24,7 +27,7 @@ import com.example.movietalk.movie.repository.MovieImageRepository;
 import com.example.movietalk.movie.repository.MovieRepository;
 import com.example.movietalk.movie.repository.ReviewRepository;
 
-// @Disabled
+@Disabled
 @SpringBootTest
 public class MovieRepositoryTest {
     @Autowired
@@ -42,6 +45,31 @@ public class MovieRepositoryTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Test
+    @Transactional
+    @Commit
+    public void deleteByMemberTest() {
+        // 회원삭제 => 회원과 리뷰가 외래키 관계이기 때문에 순차적으로 삭제
+        // 1번과 2번을 동시에 진행하기 위해 transactional 어노테이션 필요
+        // 1. 회원이 작성한 리뷰 제거
+        reviewRepository.deleteByMember(Member.builder().mid(2L).build());
+        // 2. 회원 삭제
+        memberRepository.deleteById(2L);
+    }
+
+    // @Transactional(readOnly = true)
+    @Test
+    public void getMovieReviewTest() {
+        List<Review> result = reviewRepository.findByMovie(Movie.builder().mno(100L).build());
+
+        result.forEach(r -> {
+            System.out.println(r);
+
+            // 리뷰 작성자 조회
+            System.out.println(r.getMember().getEmail());
+        });
+    }
+
     // 조회
     // mno, 영화 이미지 중 첫 번째 이미지, 영화제목, 리뷰 수, 리뷰 평균 점수, 영화 등록일
     @Test
@@ -50,14 +78,25 @@ public class MovieRepositoryTest {
 
         Page<Object[]> result = movieRepository.getListPage(pageable);
         for (Object[] objects : result) {
-            System.out.println(Arrays.toString(objects));
+            // System.out.println(Arrays.toString(objects));
+            Movie movie = (Movie) objects[0];
+            MovieImage movieImage = (MovieImage) objects[1];
+            Long reviewCnt = (Long) objects[2];
+            Double avgGrade = (Double) objects[3];
+            System.out.println(movie);
+            System.out.println(movieImage);
+            System.out.println(reviewCnt);
+            System.out.println(avgGrade);
         }
     }
 
     @Test
     public void getMovieWithAllTest() {
-        Object[] result = movieRepository.getMovieWithAll(100L);
-        System.out.println(Arrays.toString(result));
+        List<Object[]> result = movieRepository.getMovieWithAll(100L);
+        for (Object[] objects : result) {
+
+            System.out.println(Arrays.toString(objects));
+        }
     }
 
     // 멤버 삽입
