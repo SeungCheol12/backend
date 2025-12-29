@@ -22,7 +22,8 @@ public class MovieDTO {
     private String title;
 
     // 영화 이미지
-    private List movieImages = new ArrayList<>();
+    @Builder.Default
+    private List<MovieImageDTO> movieImages = new ArrayList<>();
 
     private double avg;
 

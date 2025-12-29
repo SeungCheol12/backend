@@ -27,6 +27,10 @@ public class MovieImageDTO {
 
     // 썸네일 이미지
     public String getThumbnailURL() {
+        // null 체크 추가
+        if (path == null || uuid == null || imgName == null) {
+            return null;
+        }
         String thumbFullPath = "";
         // java.net.URL~
         try {
@@ -38,11 +42,15 @@ public class MovieImageDTO {
     }
 
     public String getImageURL() {
+        // null 체크 추가
+        if (path == null || uuid == null || imgName == null) {
+            return null;
+        }
         String fullPath = "";
 
         // java.net.URL~
         try {
-            fullPath = URLEncoder.encode(path + "/_" + uuid + "_" + imgName, "utf-8");
+            fullPath = URLEncoder.encode(path + "/" + uuid + "_" + imgName, "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

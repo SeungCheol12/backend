@@ -38,4 +38,7 @@ public class MovieImage extends BaseEntity {
     @JoinColumn(name = "mno")
     private Movie movie;
 
+    public void setOrd(int ord) {
+        this.ord = ord;
+    }
 }
