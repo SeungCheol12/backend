@@ -48,6 +48,17 @@ public class MovieRepositoryTest {
     @Test
     @Transactional
     @Commit
+    public void deleteByMovieTest() {
+        Movie movie = movieRepository.findById(108L).get();
+        // 영화 이미지 삭제
+        movieImageRepository.deleteByMovie(movie);
+        // 영화 삭제
+        movieRepository.delete(movie);
+    }
+
+    @Test
+    @Transactional
+    @Commit
     public void deleteByMemberTest() {
         // 회원삭제 => 회원과 리뷰가 외래키 관계이기 때문에 순차적으로 삭제
         // 1번과 2번을 동시에 진행하기 위해 transactional 어노테이션 필요

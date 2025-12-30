@@ -41,4 +41,5 @@ public class MovieImage extends BaseEntity {
     public void setOrd(int ord) {
         this.ord = ord;
     }
+
 }

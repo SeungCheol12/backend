@@ -178,4 +178,27 @@ public class MovieService {
         return movieDTO;
     }
 
+    // 영화 수정
+    public Long updateRow(MovieDTO dto) {
+        // 영화 제목 수정
+        Movie movie = movieRepository.findById(dto.getMno()).get();
+        movie.changeTitle(dto.getTitle());
+        // 영화 이미지 제거
+        movieImageRepository.deleteByMovie(movie);
+
+        // 이미지 추가
+        movie = dtoToEntity(dto);
+        movie.getMovieImages().forEach(img -> movieImageRepository.save(img));
+
+        return movie.getMno();
+    }
+
+    // 영화 삭제
+    public void deleteRow(Long mno) {
+        // 영화 이미지 제거
+        Movie movie = movieRepository.findById(mno).get();
+        movieImageRepository.deleteByMovie(movie);
+        // 영화 삭제
+        movieRepository.delete(movie);
+    }
 }

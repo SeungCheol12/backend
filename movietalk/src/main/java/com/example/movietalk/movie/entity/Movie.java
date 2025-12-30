@@ -37,6 +37,11 @@ public class Movie extends BaseEntity {
     private List<MovieImage> movieImages = new ArrayList<>();
 
     public void addImage(MovieImage movieImage) {
+        movieImage.setOrd(this.movieImages.size());
         movieImages.add(movieImage);
+    }
+
+    public void changeTitle(String title) {
+        this.title = title;
     }
 }

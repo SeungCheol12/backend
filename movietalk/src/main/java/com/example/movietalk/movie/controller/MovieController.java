@@ -33,24 +33,46 @@ public class MovieController {
     }
 
     @GetMapping("/create")
-    public void getCreate() {
+    public void getCreate(PageRequestDTO pageRequestDTO) {
         log.info("영화 추가 폼 요청");
     }
 
     @PostMapping("/create")
-    public String postMethodName(MovieDTO movieDTO, RedirectAttributes rttr) {
+    public String postMethodName(MovieDTO movieDTO, RedirectAttributes rttr, PageRequestDTO pageRequestDTO) {
         log.info("영화 추가 요청 {}", movieDTO);
         String title = movieService.register(movieDTO);
         rttr.addFlashAttribute("mno", title + "영화 등록 완료");
+        rttr.addAttribute("page", "1");
+        rttr.addAttribute("size", pageRequestDTO.getSize());
         return "redirect:/movie/list";
     }
 
     @GetMapping({ "/read", "/modify" })
-    public void getRead(@RequestParam Long mno, Model model) {
+    public void getRead(@RequestParam Long mno, Model model, PageRequestDTO pageRequestDTO) {
         log.info("get or modify {}", mno);
 
         MovieDTO movieDTO = movieService.getRow(mno);
         model.addAttribute("dto", movieDTO);
+    }
+
+    @PostMapping("/modify")
+    public String postModify(MovieDTO movieDTO, RedirectAttributes rttr, PageRequestDTO pageRequestDTO) {
+        log.info("영화 수정 요청 {}", movieDTO);
+        Long mno = movieService.updateRow(movieDTO);
+
+        rttr.addAttribute("mno", mno);
+        rttr.addAttribute("page", pageRequestDTO.getPage());
+        rttr.addAttribute("size", pageRequestDTO.getSize());
+        return "redirect:/movie/read";
+    }
+
+    @PostMapping("/remove")
+    public String postRemove(Long mno, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
+        log.info("삭제 {}", mno);
+        movieService.deleteRow(mno);
+        rttr.addAttribute("page", pageRequestDTO.getPage());
+        rttr.addAttribute("size", pageRequestDTO.getSize());
+        return "redirect:/movie/list";
     }
 
 }
