@@ -3,6 +3,7 @@ package com.example.movietalk.member.entity;
 import com.example.movietalk.common.BaseEntity;
 import com.example.movietalk.member.entity.constant.Role;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,7 +28,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mid;
-
+    @Column(unique = true)
     private String email;
 
     private String password;

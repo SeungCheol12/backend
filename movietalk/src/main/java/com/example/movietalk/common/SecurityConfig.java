@@ -37,7 +37,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/assets/**", "/img/**", "/js/**").permitAll()
                 .anyRequest().permitAll());
 
-        // http.formLogin(login -> login.loginPage("/member/login")
+        http.formLogin(login -> login.loginPage("/member/login"));
+
         // .successHandler(loginSuccessHandler()).permitAll());
 
         // http.oauth2Login(login -> login.successHandler(loginSuccessHandler()));

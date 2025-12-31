@@ -22,4 +22,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Modifying // delete 쿼리문에 필수적
     @Query("delete from Review r where r.member = :member")
     void deleteByMember(Member member);
+
+    // 영화를 기준으로 리뷰 삭제
+    // N+1 방지를 위해 쿼리문 작성
+    @Modifying // delete 쿼리문에 필수적
+    @Query("delete from Review r where r.movie = :movie")
+    void deleteByMovie(Movie movie);
 }

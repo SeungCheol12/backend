@@ -23,6 +23,7 @@ import com.example.movietalk.movie.entity.Movie;
 import com.example.movietalk.movie.entity.MovieImage;
 import com.example.movietalk.movie.repository.MovieImageRepository;
 import com.example.movietalk.movie.repository.MovieRepository;
+import com.example.movietalk.movie.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +37,8 @@ public class MovieService {
     private final MovieRepository movieRepository;
 
     private final MovieImageRepository movieImageRepository;
+
+    private final ReviewRepository reviewRepository;
 
     // N:1 관계일 때
     // public Long register(MovieDTO dto) {
@@ -198,6 +201,9 @@ public class MovieService {
         // 영화 이미지 제거
         Movie movie = movieRepository.findById(mno).get();
         movieImageRepository.deleteByMovie(movie);
+        // 리뷰 삭제
+        reviewRepository.deleteByMovie(movie);
+
         // 영화 삭제
         movieRepository.delete(movie);
     }
