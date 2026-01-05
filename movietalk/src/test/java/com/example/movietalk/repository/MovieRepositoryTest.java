@@ -123,10 +123,10 @@ public class MovieRepositoryTest {
     public void memeberInsertTest() {
         IntStream.rangeClosed(1, 10).forEach(i -> {
             Member member = Member.builder()
-                    .email("user" + i + "@gamil.com")
+                    .email("user" + i + "@gmail.com")
                     .nickname("user" + i)
                     .password(passwordEncoder.encode("1111"))
-                    .role(Role.MAMBER)
+                    .role(Role.MEMBER)
                     .build();
 
             memberRepository.save(member);

@@ -43,12 +43,15 @@ public class SecurityConfig {
 
         // http.oauth2Login(login -> login.successHandler(loginSuccessHandler()));
 
-        // http.logout(logout -> logout.logoutUrl("/member/logout")
-        // .logoutSuccessUrl("/"));
+        http.logout(logout -> logout
+                .logoutUrl("/member/logout")
+                .logoutSuccessUrl("/"));
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
-        http.csrf(csrf -> csrf.disable());
+        // csrf 기능 중지
+        // http.csrf(csrf -> csrf.disable());
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/upload/**"));
 
         // http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
         return http.build();

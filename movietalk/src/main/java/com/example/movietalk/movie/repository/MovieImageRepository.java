@@ -12,4 +12,5 @@ public interface MovieImageRepository extends JpaRepository<MovieImage, Long> {
     @Modifying
     @Query("delete from MovieImage mi where mi.movie = :movie")
     void deleteByMovie(Movie movie);
+
 }

@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class AuthUserDTO extends User {
-    private CustomUserDTO customeUserDTO;
+    private CustomUserDTO customUserDTO;
     // Collection : List, Set
     // List<SimpleGrantedAutjority> list = new ArrayList<>();
     // list.add("ROLE_");
@@ -26,10 +26,10 @@ public class AuthUserDTO extends User {
         super(username, password, authorities);
     }
 
-    public AuthUserDTO(CustomUserDTO customeUserDTO) {
-        super(customeUserDTO.getEmail(), customeUserDTO.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + customeUserDTO.getRole())));
-        this.customeUserDTO = customeUserDTO;
+    public AuthUserDTO(CustomUserDTO customUserDTO) {
+        super(customUserDTO.getEmail(), customUserDTO.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + customUserDTO.getRole())));
+        this.customUserDTO = customUserDTO;
     }
 
 }

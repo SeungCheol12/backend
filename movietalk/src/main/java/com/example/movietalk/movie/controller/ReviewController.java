@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +32,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 특정 영화에 달려 있는 모든 review 가져오기 /reviews/mno/all + GET
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{mno}/all")
     public List<ReviewDTO> getReviews(@PathVariable Long mno) {
         log.info("특정 영화의 전체 리뷰 요청 {}", mno);
@@ -48,6 +50,8 @@ public class ReviewController {
     }
 
     // 2) 수정 /reviews/mno/rno + PUT
+    // 로그인 사용자 == 리뷰 사용자
+    @PreAuthorize("authentication.name == #dto.email")
     @PutMapping("/{mno}/{rno}")
     public ResponseEntity<Long> putMethodName(@PathVariable Long rno, @RequestBody ReviewDTO dto) {
         log.info("특정 영화 특정 리뷰 수정 {}", dto);
@@ -59,14 +63,16 @@ public class ReviewController {
     }
 
     // 특정 영화의 리뷰 삭제 /reviews/mno/rno + DELETE
+    @PreAuthorize("authentication.name == #email")
     @DeleteMapping("/{mno}/{rno}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long rno) {
+    public ResponseEntity<String> deleteReview(@PathVariable Long rno, String email) {
         log.info("특정 영화 특정 리뷰 삭제 {}", rno);
         reviewService.deleteRow(rno);
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }
 
     // 특정 영화의 리뷰 추가 /reviews/mno + POST
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{mno}")
     public Long postReview(@PathVariable Long mno, @RequestBody ReviewDTO dto) {
         log.info("특정 영화 특정 리뷰 추가 {}", dto);
