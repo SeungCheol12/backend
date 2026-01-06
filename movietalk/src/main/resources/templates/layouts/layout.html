@@ -46,8 +46,9 @@
         </main>
       </div>
     </div>
-    <form th:action="@{/member/logout}" method="post" id="logoutForm"></form>
-    <script>
+    <!-- @click.prevent=”$refs.logoutForm.submit()”를 활용해서 로그아웃 -->
+    <form th:action="@{/member/logout}" method="post" x-ref="logoutForm"></form>
+    <!-- <script>
       const logout = document.querySelector("#logout");
       if (logout) {
         logout.addEventListener("click", (e) => {
@@ -55,7 +56,7 @@
           document.querySelector("#logoutForm").submit();
         });
       }
-    </script>
+    </script> -->
     <!-- <script>
       console.log("Script loaded");
       const logout = document.querySelector("#logout");
