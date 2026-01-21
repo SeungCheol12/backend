@@ -35,11 +35,12 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/assets/**", "/img/**", "/js/**").permitAll()
-                .anyRequest().permitAll());
+                .requestMatchers("/movie/list", "/member/register", "/upload/display/**").permitAll()
+                .requestMatchers("movie/create").hasRole("ADMIN")
+                .anyRequest().authenticated());
 
-        http.formLogin(login -> login.loginPage("/member/login"));
-
-        // .successHandler(loginSuccessHandler()).permitAll());
+        http.formLogin(login -> login.loginPage("/member/login").permitAll()
+                .successHandler(loginSuccessHandler()));
 
         // http.oauth2Login(login -> login.successHandler(loginSuccessHandler()));
 
@@ -53,10 +54,16 @@ public class SecurityConfig {
         // http.csrf(csrf -> csrf.disable());
         http.csrf(csrf -> csrf.ignoringRequestMatchers("/upload/**"));
 
+        // 접근제한 처리
+        http.exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler()));
         // http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
         return http.build();
     }
 
+    @Bean
+    CustomAccessDeniedHandler customAccessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
     // @Bean
     // RememberMeServices rememberMeServices(UserDetailsService userDetailsService)
     // {
@@ -74,10 +81,10 @@ public class SecurityConfig {
     // return services;
     // }
 
-    // @Bean
-    // LoginSuccessHandler loginSuccessHandler() {
-    // return new LoginSuccessHandler();
-    // }
+    @Bean
+    LoginSuccessHandler loginSuccessHandler() {
+        return new LoginSuccessHandler();
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
