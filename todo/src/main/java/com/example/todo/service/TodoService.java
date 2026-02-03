@@ -3,12 +3,16 @@ package com.example.todo.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.text.html.parser.Entity;
-
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.todo.dto.PageRequestDTO;
+import com.example.todo.dto.PageResultDTO;
 import com.example.todo.dto.TodoDTO;
 import com.example.todo.entity.Todo;
 import com.example.todo.repository.TodoRepository;
@@ -49,12 +53,26 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
+    // completed에 따른 조회
     @Transactional(readOnly = true)
-    public List<TodoDTO> findCompledTodos(boolean completed) {
-        List<Todo> result = todoRepository.findByCompleted(completed);
+    public PageResultDTO<TodoDTO> findCompledTodos(Boolean completed, PageRequestDTO dto) {
+        Page<Todo> result = null;
+
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize(), Sort.by("id").descending());
+        if (completed == null) {
+            result = todoRepository.findAll(pageable);
+        } else {
+            result = todoRepository.findByCompleted(completed, pageable);
+        }
         // entity -> dto
         // 람다 사용
-        return result.stream().map(todo -> modelMapper.map(todo, TodoDTO.class)).collect(Collectors.toList());
+        List<TodoDTO> dtoList = result.stream().map(todo -> modelMapper.map(todo, TodoDTO.class))
+                .collect(Collectors.toList());
+        return PageResultDTO.<TodoDTO>withAll()
+                .dtoList(dtoList)
+                .totalCount(result.getTotalElements())
+                .pageRequestDTO(dto)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -64,10 +82,11 @@ public class TodoService {
         return result.stream().map(todo -> modelMapper.map(todo, TodoDTO.class)).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<TodoDTO> findTodos() {
-        List<Todo> result = todoRepository.findAll();
-        // entity -> dto
-        return result.stream().map(todo -> modelMapper.map(todo, TodoDTO.class)).collect(Collectors.toList());
-    }
+    // @Transactional(readOnly = true)
+    // public List<TodoDTO> findTodos() {
+    // List<Todo> result = todoRepository.findAll();
+    // // entity -> dto
+    // return result.stream().map(todo -> modelMapper.map(todo,
+    // TodoDTO.class)).collect(Collectors.toList());
+    // }
 }

@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: novels
+
+  # thymeleaf
+  thymeleaf:
+    cache: false
+
+  # DB 서버 연동 정보
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/react
+    username: javadb
+    password: 12345
+
+    # 오라클
+    # driver-class-name: oracle.jdbc.OracleDriver
+    # url: jdbc:oracle:thin:@localhost:1521:xe
+    # username: javadb
+    # password: 12345
+
+  # JPA 설정
+  jpa:
+    # 테이블 자동 생성 여부
+    # none : 운영환경
+    # validate : 엔티티와 테이블 정상 매핑 확인(운영환경)
+    # create : 기존 테이블 삭제 후 테이블 생성(개발시)
+    # create-drop : 기존 테이블 삭제 후 테이블 생성, 종료 시점에 테이블 삭제
+    # update : 변경된 부분만 적용(기존 칼럼 제거는 안해줌)
+    hibernate:
+      ddl-auto: update
+
+    # 생성되는 sql 구문 출력 여부
+    # show-sql: true
+
+    # 예쁘게 sql 구문 출력
+    properties:
+      hibernate:
+        "[format_sql]": true
+        "[highlight_sql]": true
+
+# 로그 출력 (개발용)
+logging:
+  level:
+    "[com.example.todo]": DEBUG # 전체 애플리케이션 로그
+    org:
+      hibernate:
+        SQL: debug
+        orm:
+          jdbc:
+            bind: trace
+      springframewrok:
+        security:
+          web: trace
