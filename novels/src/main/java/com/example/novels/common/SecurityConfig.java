@@ -39,20 +39,27 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "api/novels/**").permitAll()
                 .anyRequest().authenticated());
-        http.csrf(csrf -> csrf.disable());
-
-        http.formLogin(login -> login.loginPage("/api/member/login") // 폼 로그인
-                // .defaultSuccessUrl("/", true)) // 로그인 성공 시 가는 기본 주소
-                .successHandler(loginSuccessHandler()) // 로그인 성공 시 가는 주소
-                .failureHandler(new LoginFailureHandler()));
         // cors 설정
         http.cors(httpSecurityCorsConfig -> httpSecurityCorsConfig.configurationSource(corsconfigurationSource()));
 
         // API 서버 상태
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.csrf(csrf -> csrf.disable());
+        http.formLogin(login -> login.loginPage("/api/member/login") // 폼 로그인
+                // .defaultSuccessUrl("/", true)) // 로그인 성공 시 가는 기본 주소
+                .successHandler(loginSuccessHandler()) // 로그인 성공 시 가는 주소
+                .failureHandler(new LoginFailureHandler()));
 
         // 필터 지정
         http.addFilterBefore(jwtCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling(e -> e
+                .authenticationEntryPoint((req, res, ex) -> {
+                    res.setStatus(401);
+                })
+                .accessDeniedHandler((req, res, ex) -> {
+                    res.setStatus(403);
+                }));
         return http.build();
     }
 

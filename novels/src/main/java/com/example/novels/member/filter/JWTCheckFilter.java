@@ -30,12 +30,12 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 
             throws ServletException, IOException {
-        try {
-            log.info("------------------ JWT Filter ------------------");
-            // 클라이언트는 헤더를 통해서 토큰 서버로 전송
-            String authHeaderStr = request.getHeader("Authorization");
-            // 토큰 값 시작 문자열 : Bearer
-            if (authHeaderStr != null && authHeaderStr.startsWith("Bearer ")) {
+        log.info("------------------ JWT Filter ------------------");
+        // 클라이언트는 헤더를 통해서 토큰 서버로 전송
+        String authHeaderStr = request.getHeader("Authorization");
+        // 토큰 값 시작 문자열 : Bearer
+        if (authHeaderStr != null && authHeaderStr.startsWith("Bearer ")) {
+            try {
                 // "Bearer" 이후의 문자 분리
                 String accessToken = authHeaderStr.substring(7);
                 // 토큰 유효검증
@@ -50,27 +50,25 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 List<String> roles = (List<String>) claims.get("roles");
 
                 MemberDTO memberDTO = new MemberDTO(email, pw, nickname, social, roles);
-
                 // 인증정보 => SecurityContext 저장
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         memberDTO,
                         pw, memberDTO.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                // filterChain.doFilter(request, response);
+            } catch (Exception e) {
+                log.error("JWT token error");
+                log.error(e.getMessage());
 
-                filterChain.doFilter(request, response);
-
+                // 에러메세지를 전달(json)
+                Gson gson = new Gson();
+                String msg = gson.toJson(Map.of("error", "ERROR_ACCESS_TOKEN"));
+                response.setContentType("application/json");
+                PrintWriter printWriter = response.getWriter();
+                printWriter.println(msg);
+                printWriter.close();
             }
-        } catch (Exception e) {
-            log.error("JWT token error");
-            log.error(e.getMessage());
 
-            // 에러메세지를 전달(json)
-            Gson gson = new Gson();
-            String msg = gson.toJson(Map.of("error", "ERROR_ACCESS_TOKEN"));
-            response.setContentType("application/json");
-            PrintWriter printWriter = response.getWriter();
-            printWriter.println(msg);
-            printWriter.close();
         }
     }
 
@@ -86,16 +84,19 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.trace("check url {}", path);
 
         if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-                || path.startsWith("/api/member")) {
+                || path.startsWith("/api/member/login")) {
             return true;
 
+        }
+        if ("GET".equals(request.getMethod()) && path.startsWith("/api/novels")) {
+            return true;
         }
         // \\d+$ : \d == 숫자 0-9 / + : 1 ~ 무제한 / $ : 끝나는
-        if (path.startsWith("/api/novels")
-                || path.matches("/api/novels/\\d+$")) {
-            return true;
+        // if (path.startsWith("/api/novels")
+        // || path.matches("/api/novels/\\d+$")) {
+        // return true;
 
-        }
+        // }
         return false;
     }
 }

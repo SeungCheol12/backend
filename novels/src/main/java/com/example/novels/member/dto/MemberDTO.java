@@ -46,9 +46,10 @@ public class MemberDTO extends User /* implements OAuth2User */ {
             List<String> roles) {
         super(username, pw,
                 roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList()));
-        this.fromSocial = fromSocial;
         this.email = username;
         this.pw = pw;
+        this.fromSocial = fromSocial;
+        this.nickname = nickname;
         this.roles = roles;
     }
 

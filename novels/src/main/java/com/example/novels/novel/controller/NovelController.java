@@ -54,7 +54,7 @@ public class NovelController {
 
     // /api/novels/add + post : 추가
     @Operation(summary = "novel 추가", description = "novel 추가 API")
-    @PreAuthorize("hasAnyRole('ROEL_MEMBER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('MEMBER', 'ADMIN')")
     @PostMapping("/add")
     public Long postRow(@RequestBody NovelDTO dto) {
         log.info("novel 추가 {}", dto);
@@ -64,7 +64,7 @@ public class NovelController {
 
     // /api/novels/available/1 + put : 수정
     @Operation(summary = "novel 수정", description = "novel 수정 API - 이용 가능 여부")
-    @PreAuthorize("hasAnyRole('ROEL_MEMBER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('MEMBER', 'ADMIN')")
     @PutMapping("/available/{id}")
     public Long putRow(@PathVariable Long id, @RequestBody NovelDTO dto) {
         log.info("novel 수정 {} {}", id, dto);
@@ -73,7 +73,7 @@ public class NovelController {
     }
 
     // /api/novels/edit/1 + put : 수정
-    @PreAuthorize("hasAnyRole('ROEL_MEMBER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('MEMBER', 'ADMIN')")
     @Operation(summary = "novel 수정", description = "novel 수정 API - 이용 가능 여부, 장르변경")
     @PutMapping("/edit/{id}")
     public Long putNovel(@PathVariable Long id, @RequestBody NovelDTO dto) {
@@ -83,7 +83,7 @@ public class NovelController {
     }
 
     // /api/novels/1 + delete : 삭제
-    @PreAuthorize("hasAnyRole('ROEL_MEMBER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('MEMBER', 'ADMIN')")
     @Operation(summary = "novel 삭제", description = "novel 삭제 API")
     @DeleteMapping("/{id}")
     public String deleteRow(@PathVariable Long id) {
