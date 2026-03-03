@@ -1,4 +1,4 @@
-package com.example.ai.config;
+package com.example.novels.ai.config;
 
 import javax.sql.DataSource;
 

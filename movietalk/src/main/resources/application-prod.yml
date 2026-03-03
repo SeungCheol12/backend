@@ -1,0 +1,16 @@
+spring:
+  # DB 서버 연동 정보
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/appdb
+    username: appuser
+    password: "12345"
+
+# 실제 파일이 업로드 될 경로 (클래스파일에서 호출)
+com:
+  example:
+    movietalk:
+      upload:
+        path: "upload"
+        # 프로젝트 내에 폴더 생성됨
+        # path: upload

@@ -1,10 +1,14 @@
 package com.example.ai.rag;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -28,6 +32,7 @@ public class InMemoryDocumentVectorStore {
             }
             var document = new Document(fileText, merged);
 
+            // 데이터 분할
             var textSplitter = TokenTextSplitter.builder()
                     .withChunkSize(512)
                     .withMinChunkSizeChars(350)
@@ -43,5 +48,36 @@ public class InMemoryDocumentVectorStore {
             throw new DocumentProcessingException(HttpStatus.INTERNAL_SERVER_ERROR, "임베딩 및 저장 실패:" + e.getMessage(), e);
 
         }
+    }
+
+    public List<DocumentSearchResultDto> similaritySearch(String question, int maxResults) {
+        var regRequest = SearchRequest.builder()
+                .query(question)
+                .topK(maxResults)
+                .similarityThreshold(0.3)
+                .build();
+        List<Document> results = vectorStore.similaritySearch(regRequest);
+        if (results == null) {
+            return Collections.emptyList();
+        }
+        return results.stream()
+                .map(r -> {
+                    Map<String, Object> md = r.getMetadata();
+                    String id = String.valueOf(md.getOrDefault("id", md.getOrDefault("docId", "unknown")));
+                    String content = r.getText() == null ? "" : r.getText();
+                    double score = r.getScore() == null ? 0.0 : r.getScore();
+
+                    Map<String, Object> filtered = md.entrySet().stream()
+                            .filter(e -> !e.getKey().equals("id") && !e.getKey().equals("docId"))
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+                    return DocumentSearchResultDto.builder()
+                            .id(id)
+                            .content(content)
+                            .score(score)
+                            .metadata(filtered)
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 }

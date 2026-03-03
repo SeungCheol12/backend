@@ -28,4 +28,7 @@ public class NovelDTO {
     private Integer rating; // 평점
 
     private String email;
+    private String summary; // 줄거리
+
+    private String description; // ai 가 생성한 소개글
 }

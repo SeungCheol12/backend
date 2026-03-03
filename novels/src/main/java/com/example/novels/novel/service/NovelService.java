@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.novels.ai.domain.response.AiDescriptionDto;
 import com.example.novels.novel.dto.NovelDTO;
 import com.example.novels.novel.dto.PageRequestDTO;
 import com.example.novels.novel.dto.PageResultDTO;
@@ -30,6 +32,7 @@ public class NovelService {
 
     private final NovelRepository novelRepository;
     private final GradeRepository gradeRepository;
+    private final ChatClient chatClient;
 
     // CRUD
     public Long create(NovelDTO dto) {
@@ -37,11 +40,46 @@ public class NovelService {
                 .author(dto.getAuthor())
                 .title(dto.getTitle())
                 .genre(Genre.builder().id(dto.getGid()).build())
+                .summary(dto.getSummary())
                 .publishedDate(dto.getPublishedDate())
                 .available(dto.isAvailable())
                 .build();
+        Long id = novelRepository.save(novel).getId();
+        return id;
+    }
 
-        return novelRepository.save(novel).getId();
+    // 도서 등록 후 ai 소개를 작성
+    public AiDescriptionDto generateDescription(Long id) {
+        // description 이 없는 경우에 ai 소개글 작성
+        Novel novel = novelRepository.findById(id).get();
+        if (novel.getDescription() != null && !novel.getDescription().isBlank()) {
+            //
+            return new AiDescriptionDto(id, novel.getDescription());
+        }
+        // ai 요청 들어가기
+        String system = """
+                당신은 출판사 마케터 겸 카피라이터 입니다.
+                입력으로 제공된 정보(도서명, 작가, 장르, 줄거리)만 활용한다.
+                줄거리/등장인물/세계관/수상경력 등 제공되지 않은 사실을 사용하지 말 것.
+                대신 장르의 매력, 독서 경험, 기대 포인트, 추천 독자를 중심으로 소개문을 작성
+                """.stripIndent();
+
+        String user = """
+                도서명:%s
+                작가:%s
+                장르:%s
+                줄거리:%s
+
+                출력규칙:
+                - 한국어 3~5 문장
+                - 첫 문장을 훅(흥미 유발)으로 시작
+                - 마지막 문장은 '이런 독자에게 추천:' 으로 시작하는 한 문장
+                - 과장 광고처럼 느껴지지 않게 자연스러운 문장 출력
+                """.formatted(novel.getTitle(), novel.getAuthor(), novel.getGenre().getName(), novel.getSummary());
+        String aiText = chatClient.prompt().system(system).user(user).call().content();
+        // dirty checking
+        novel.changeDescription(aiText);
+        return new AiDescriptionDto(id, novel.getDescription());
     }
 
     @Transactional(readOnly = true)
@@ -94,6 +132,8 @@ public class NovelService {
                 .title(novel.getTitle())
                 .available(novel.isAvailable())
                 .publishedDate(novel.getPublishedDate())
+                .summary(novel.getSummary())
+                .description(novel.getDescription())
                 .gid(genre.getId())
                 .genreName(genre.getName())
                 .rating(rating != null ? rating.intValue() : 0)
